@@ -1,26 +1,45 @@
-import React from 'react'
-import './FeaturedProducts.css'
+import React, { useEffect, useState } from 'react';
+import './FeaturedProducts.css';
 
 const FeaturedProducts = () => {
-    const products = [
-      { id: 1, title: 'Product 1', price: '$29.99', image: 'path/to/product1.jpg' },
-      { id: 2, title: 'Product 2', price: '$39.99', image: 'path/to/product2.jpg' },
-      { id: 3, title: 'Product 3', price: '$49.99', image: 'path/to/product3.jpg' },
-      { id: 4, title: 'Product 4', price: '$19.99', image: 'path/to/product4.jpg' },
-    ];
-  
-    return (
-      <div className="featured-products">
-        {products.map(product => (
-          <div key={product.id} className="product">
-            <img src={product.image} alt={product.title} />
-            <h3>{product.title}</h3>
-            <p>{product.price}</p>
-            <button>Add to Cart</button>
-          </div>
-        ))}
-      </div>
-    );
-  };
-  
+  // useState digunakan untuk mendeklarasikan variabel state di React.
+  // products adalah variabel state yang menyimpan data produk, dan setProducts adalah fungsi untuk memperbarui state ini.
+  const [products, setProducts] = useState([]);
+
+  // useEffect digunakan untuk menjalankan efek samping di komponen (misalnya, memuat data dari API) setelah render pertama kali selesai.
+  useEffect(() => {
+    // Fungsi asinkron untuk mengambil data produk dari API.
+    const fetchProducts = async () => {
+      try {
+        // Melakukan fetch (pengambilan) data dari API.
+        const response = await fetch('https://fakestoreapi.com/products');
+        // Mengubah response JSON menjadi objek JavaScript dan menyimpannya di variabel data.
+        const data = await response.json();
+        // Menggunakan setProducts untuk memperbarui state dengan data yang diambil dari API.
+        setProducts(data);
+      } catch (error) {
+        // Menangkap dan menampilkan error jika terjadi kesalahan dalam proses fetch.
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    // Memanggil fungsi fetchProducts untuk mulai mengambil data dari API saat komponen pertama kali di-render.
+    fetchProducts();
+  }, []); // Array kosong [] menunjukkan bahwa efek ini hanya akan dijalankan sekali saat komponen pertama kali di-render.
+
+  // Render komponen dengan menggunakan data yang diambil dari state products.
+  return (
+    <div className="featured-products">
+      {products.map(product => (
+        <div key={product.id} className="product">
+          <img src={product.image} alt={product.title} />
+          <h3>{product.title}</h3>
+          <p>${product.price}</p>
+          <button>Add to Cart</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export default FeaturedProducts;
